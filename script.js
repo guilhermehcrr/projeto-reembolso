@@ -7,6 +7,7 @@ const category = document.getElementById('category');
 //Seleciona o elemento de lista onde as despesas serão adicionadas
 const expenseList = document.querySelector('ul');
 const expensesQuantity = document.querySelector("aside header p span");
+const expensesTotal = document.querySelector("aside header h2");
 
 //Captura o evento de input para formatar o valor
 
@@ -84,7 +85,7 @@ function expenseAdd(newExpense) {
 
     //Cria o valor da despesa
     const expenseAmount = document.createElement('span');
-    expenseAmount.classList.add('expense-value');
+    expenseAmount.classList.add('expense-amount');
     expenseAmount.innerHTML = `<small>R$</small>${newExpense.amount.toUpperCase().replace("R$","")}`; // Formata o valor como moeda brasileira
     
     //Cria o ícone de remover
@@ -134,11 +135,34 @@ function updateTotals() {
   // Percorre cada item (li) da lista (ul)
 for(let item = 0; item < items.length; item++){
     const itemAmount = items[item].querySelector(".expense-amount")   
-    console.log(itemAmount)
+    let value = itemAmount.textContent.replace(/\D/g, ''); // Remove caracteres não numéricos
+    value = parseFloat(value) / 100; // Converte o valor para centavos
+    total += value; // Incrementa o total com o valor do item
+    console.log(value, total);
+
 }
+
+const SymbolBRL = document.createElement('small');
+SymbolBRL.textContent = "R$"; // Cria o símbolo da moeda brasileira
+
+total = formatCurrencyBRL(total).toUpperCase().replace("R$",""); // Formata o total como moeda brasileira
+
+expensesTotal.innerHTML = `${SymbolBRL.outerHTML}${total}`; // Atualiza o total na interface
 }
 catch (error) {
   console.error('Erro ao atualizar totais:', error);
   alert('Erro ao calcular o total. Verifique os dados e tente novamente.');
   }
 }
+
+//Evento que captura o clique nos itens da lista
+expenseList.addEventListener("click", function(event) {
+    //Verificar se o elemento clicado é um ícone de remover
+    if (event.target.classList.contains('remove-icon')) {
+            //Remove o item da lista
+            event.target.parentElement.remove();
+            //Atualiza os totais após a remoção
+            updateTotals();
+        
+    }
+})
