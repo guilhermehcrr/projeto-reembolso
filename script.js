@@ -6,6 +6,7 @@ const category = document.getElementById('category');
 
 //Seleciona o elemento de lista onde as despesas serão adicionadas
 const expenseList = document.querySelector('ul');
+const expensesQuantity = document.querySelector("aside header p span");
 
 //Captura o evento de input para formatar o valor
 
@@ -52,6 +53,7 @@ form.onsubmit = (event) => {
   expenseAdd(newExpense); // Chama a função para adicionar o novo gasto
 }
 
+// Função para adicionar uma nova despesa à lista
 function expenseAdd(newExpense) {
   try {
 
@@ -85,23 +87,58 @@ function expenseAdd(newExpense) {
     expenseAmount.classList.add('expense-value');
     expenseAmount.innerHTML = `<small>R$</small>${newExpense.amount.toUpperCase().replace("R$","")}`; // Formata o valor como moeda brasileira
     
+    //Cria o ícone de remover
+    const removeIcon = document.createElement('img');
+    removeIcon.setAttribute('src', './img/remove.svg');
+    removeIcon.setAttribute('alt', 'remover');
+    removeIcon.classList.add('remove-icon');
+    // Adiciona o evento de clique para remover o item
+    removeIcon.onclick = () => {
+      // Remove o item da lista de despesas
+      expenseItem.remove();
+      // Exibe uma mensagem de confirmação
+      alert('Despesa removida com sucesso!');
+    };
+    
+    
 
     //Adiciona as informações no item de lista
-    
-    
     expenseItem.append(expenseIcon); // Adiciona o ícone da categoria
     
     expenseList.append(expenseItem); // Adiciona o item de lista à lista de 
-    // despesas
-     
+    // despesas 
     expenseItem.append(expenseInfo); // Adiciona as informações da despesa
-     expenseItem.append(expenseAmount); // Adiciona o valor da despesa
-
+    expenseItem.append(expenseAmount); // Adiciona o valor da despesa
+    // Adiciona o ícone de remover ao item de lista
+    expenseItem.append(removeIcon);
+// Atualiza os totais após adicionar a nova despesa
+    updateTotals();
   
 
 }catch (error) {
   alert('Erro ao adicionar gasto. Verifique os dados e tente novamente.');  
   // Exibe o erro no console para depuração
     console.error('Erro ao adicionar gasto:', error);
+  }
+}
+
+// Atualiza os totais
+function updateTotals() {
+  try{
+  // Recupera todos os itens de lista de despesas
+  const items = expenseList.children
+  expensesQuantity.textContent = `${items.length} ${items.length > 1 ? "despesas" : "despesa"}`; // Atualiza a quantidade de despesas
+
+  // Variável para incrementar o total
+  let total = 0;
+  // Percorre cada item (li) da lista (ul)
+for(let item = 0; item < items.length; item++){
+    const itemAmount = items[item].querySelector(".expense-amount")   
+    console.log(itemAmount)
+}
+}
+catch (error) {
+  console.error('Erro ao atualizar totais:', error);
+  alert('Erro ao calcular o total. Verifique os dados e tente novamente.');
   }
 }
